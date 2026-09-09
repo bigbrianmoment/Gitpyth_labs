@@ -1,0 +1,35 @@
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
+from labs.lab01 import task1, task2, task3
+
+
+def main():
+    tasks = {
+        "1": ("Аналізатор надійності паролів", task1.main),
+        "2": ("Завдання 2", task2.main),
+        "3": ("Завдання 3", task3.main),
+    }
+
+    print("Оберіть завдання для запуску:")
+    for key, (name, _) in tasks.items():
+        print(f"  {key} — {name}")
+    print("  0 — Вийти")
+
+    choice = input("\nВаш вибір: ").strip()
+
+    if choice == "0":
+        print("Вихід.")
+        return
+
+    if choice in tasks:
+        print(f"\n--- Запуск: {tasks[choice][0]} ---\n")
+        tasks[choice][1]()
+    else:
+        print("Невірний вибір.")
+
+
+if __name__ == "__main__":
+    main()
