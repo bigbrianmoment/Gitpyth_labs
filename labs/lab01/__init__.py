@@ -1,7 +1,7 @@
-import sys
 import os
+import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from labs.lab01 import task1, task2, task3
 
@@ -9,8 +9,8 @@ from labs.lab01 import task1, task2, task3
 def main():
     tasks = {
         "1": ("Аналізатор надійності паролів", task1.main),
-        "2": ("Завдання 2", task2.main),
-        "3": ("Завдання 3", task3.main),
+        "2": ("Багаторівнева система контролю доступу", task2.main),
+        "3": ("Безпечне хешування, CSV-база та JSON-логування з винятками", task3.main),
     }
 
     print("Оберіть завдання для запуску:")

@@ -1,15 +1,30 @@
 import os
-import sys
 import random
+import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-from shared.student import STUDENT_NAME, GROUP_NAME, VARIANT_NUMBER
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+from shared.student import GROUP_NAME, STUDENT_NAME, VARIANT_NUMBER
 
-passwords = ["UserPass1!", "temp", "Cyber$ecur1ty", "guest", "P0w3rful@Pass",
-"login", "Defens3#2023", "abc123", "Elit3@Secur", "demo"]
-criteria = {"min_length": 9, "require_digits": True, "require_upper": True,
-"require_special": True}
+passwords = [
+    "UserPass1!",
+    "temp",
+    "Cyber$ecur1ty",
+    "guest",
+    "P0w3rful@Pass",
+    "login",
+    "Defens3#2023",
+    "abc123",
+    "Elit3@Secur",
+    "demo",
+]
+criteria = {
+    "min_length": 9,
+    "require_digits": True,
+    "require_upper": True,
+    "require_special": True,
+}
 forbidden_passwords = {"temp", "guest", "login", "demo", "abc123", "user"}
+
 
 def has_digit(pwd):
     return any(ch.isdigit() for ch in pwd)
@@ -36,7 +51,6 @@ def assess_password(pwd, full_list):
 
     d, u, s, l = has_digit(pwd), has_upper(pwd), has_special(pwd), has_lower(pwd)
 
-
     required_flags = []
     if criteria["require_digits"]:
         required_flags.append(d)
@@ -54,11 +68,9 @@ def assess_password(pwd, full_list):
         else:
             return "Сильний"
 
-
     met_count = sum(required_flags)
     if len(pwd) >= min_len and 0 < met_count < len(required_flags):
         return "Середній"
-
 
     if any([d, u, s, l]):
         return "Слабкий"
@@ -71,7 +83,6 @@ def main():
     print(f"Група: {GROUP_NAME}")
     print(f"Варіант: {VARIANT_NUMBER}\n")
 
-
     working_list = passwords.copy()
     random_indices = [random.randint(0, len(passwords) - 1) for _ in range(3)]
     duplicates = [passwords[i] for i in random_indices]
@@ -79,9 +90,7 @@ def main():
 
     print(f"Додані дублікати (індекси {random_indices}): {duplicates}\n")
 
-
     results = [(pwd, assess_password(pwd, working_list)) for pwd in working_list]
-
 
     col1, col2 = 20, 18
     print(f"{'Пароль':<{col1}} | {'Оцінка надійності':<{col2}}")

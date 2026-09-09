@@ -1,14 +1,13 @@
-import sys
-import os
 import csv
-import json
 import hashlib
+import json
+import os
+import sys
 from datetime import datetime
 from functools import wraps
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-from shared.student import STUDENT_NAME, GROUP_NAME, VARIANT_NUMBER
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+from shared.student import GROUP_NAME, STUDENT_NAME, VARIANT_NUMBER
 
 HASH_ALGORITHM = "sha1"
 MIN_PASSWORD_LENGTH = 8
@@ -57,9 +56,11 @@ def log_event(func):
                 "event": "login",
                 "user": username,
                 "result": result_str,
-                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "timestamp": datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S"),
                 "args": [str(a) if i != 1 else "***" for i, a in enumerate(args)],
-                "kwargs": {k: ("***" if k == "password" else v) for k, v in kwargs.items()},
+                "kwargs": {
+                    k: ("***" if k == "password" else v) for k, v in kwargs.items()
+                },
             }
             _append_log(entry)
 
@@ -73,7 +74,7 @@ def _append_log(entry):
         try:
             with open(LOG_JSON, "r", encoding="utf-8") as f:
                 logs = json.load(f)
-        except (json.JSONDecodeError, IOError):
+        except (OSError, json.JSONDecodeError):
             logs = []
 
     logs.append(entry)
@@ -117,11 +118,10 @@ def create_users(users_list):
         with open(USERS_CSV, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerows(created)
-    except (FileNotFoundError, PermissionError, IOError) as e:
+    except (OSError, FileNotFoundError, PermissionError) as e:
         print(f"Помилка запису файлу users.csv: {e}")
 
     return created
-
 
 
 def read_users_db():
@@ -134,7 +134,7 @@ def read_users_db():
                     users_db.append((row[0], row[1]))
     except FileNotFoundError:
         print("Файл users.csv не знайдено.")
-    except (PermissionError, IOError) as e:
+    except (OSError, PermissionError) as e:
         print(f"Помилка читання файлу: {e}")
 
     return users_db
@@ -145,7 +145,6 @@ def print_users_db(users_db):
     print("-" * 55)
     for username, hash_value in users_db:
         print(f"{username:<15} | {hash_value}")
-
 
 
 @log_event
