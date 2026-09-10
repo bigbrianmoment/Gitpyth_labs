@@ -9,6 +9,7 @@ from functools import wraps
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 from shared.student import GROUP_NAME, STUDENT_NAME, VARIANT_NUMBER
 
+# Параметри згідно з варіантом
 HASH_ALGORITHM = "sha1"
 MIN_PASSWORD_LENGTH = 8
 
@@ -16,14 +17,16 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 USERS_CSV = os.path.join(DATA_DIR, "users.csv")
 LOG_JSON = os.path.join(DATA_DIR, "log.json")
 
+# Персональна сіль з номера варіанту, доповнена нулями до 5 символів
 PERSONAL_SALT = str(VARIANT_NUMBER).zfill(5)
 
 
 class ValidationError(Exception):
-    pass
+    """Власний виняток для паролів, коротших за мінімальну довжину."""
 
 
 def generate_hash(password: str, salt: str = "00000") -> str:
+    """Генерує SHA1 хеш від пароля з сіллю."""
     if not password or not salt:
         raise ValueError("Пароль та сіль не можуть бути порожніми")
 
@@ -38,6 +41,9 @@ def generate_hash(password: str, salt: str = "00000") -> str:
 
 
 def log_event(func):
+    """Декоратор для login. Записує кожну спробу входу в log.json,
+    незалежно від того, успішна вона чи ні."""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         username = args[0] if args else kwargs.get("username", "unknown")
@@ -52,6 +58,7 @@ def log_event(func):
             result_str = "failure"
             raise
         finally:
+            # Запис у лог відбувається завжди, навіть при винятку
             entry = {
                 "event": "login",
                 "user": username,
@@ -68,6 +75,7 @@ def log_event(func):
 
 
 def _append_log(entry):
+    """Дописує подію в log.json, зберігаючи попередні записи."""
     os.makedirs(DATA_DIR, exist_ok=True)
     logs = []
     if os.path.exists(LOG_JSON):
@@ -83,6 +91,7 @@ def _append_log(entry):
         json.dump(logs, f, ensure_ascii=False, indent=2)
 
 
+# Список користувачів для реєстрації (логін, пароль)
 users_to_register = (
     ("alice", "Str0ngPass!"),
     ("bob", "Qwerty123$"),
@@ -91,18 +100,21 @@ users_to_register = (
     ("eren", "SecureP@ss9"),
     ("frank", "MyBank#2024"),
     ("lebron", "HelloWorld1!"),
-    ("mcpetya", "abc"),
+    ("mcpetya", "abc"),  # закороткий, не пройде валідацію
     ("bart", "Tr0ub4dor&3"),
     ("judyhops", "CorrectHorse9"),
 )
 
 
 def create_user(username, password):
+    """Хешує пароль користувача з персональною сіллю."""
     hash_value = generate_hash(password, PERSONAL_SALT)
     return (username, hash_value)
 
 
 def create_users(users_list):
+    """Створює users.csv з логінами та хешами паролів.
+    Некоректні паролі пропускаються, решта записуються."""
     os.makedirs(DATA_DIR, exist_ok=True)
 
     created = []
@@ -125,6 +137,7 @@ def create_users(users_list):
 
 
 def read_users_db():
+    """Зчитує users.csv у список кортежів (логін, хеш)."""
     users_db = []
     try:
         with open(USERS_CSV, "r", encoding="utf-8") as f:
@@ -141,6 +154,7 @@ def read_users_db():
 
 
 def print_users_db(users_db):
+    """Виводить базу користувачів у вигляді таблиці."""
     print(f"{'Логін':<15} | {'Хеш пароля'}")
     print("-" * 55)
     for username, hash_value in users_db:
@@ -149,6 +163,7 @@ def print_users_db(users_db):
 
 @log_event
 def login(username: str, password: str) -> bool:
+    """Перевіряє логін та пароль користувача проти users.csv."""
     if not username or not password:
         raise ValueError("Логін та пароль не можуть бути порожніми")
 

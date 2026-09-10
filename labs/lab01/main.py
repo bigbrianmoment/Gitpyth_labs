@@ -7,6 +7,8 @@ from labs.lab01 import task1, task2, task3
 
 
 def main():
+    # Словник завдань: ключ це номер вибору, значення це кортеж
+    # (назва завдання, функція main з відповідного файлу)
     tasks = {
         "1": ("Аналізатор надійності паролів", task1.main),
         "2": ("Багаторівнева система контролю доступу", task2.main),
@@ -26,7 +28,7 @@ def main():
 
     if choice in tasks:
         print(f"\n--- Запуск: {tasks[choice][0]} ---\n")
-        tasks[choice][1]()
+        tasks[choice][1]()  # викликаємо main() обраного завдання
     else:
         print("Невірний вибір.")
 
