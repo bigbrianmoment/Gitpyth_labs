@@ -11,28 +11,28 @@ def run_demo() -> None:
     print("=== Демонстрація Завдання 1: User, Admin, Session, AuditLog ===\n")
 
     # --- Створення звичайного користувача ---
-    user = User(username="alice", email="alice@example.com")
+    user = User(username="John", email="doe@example.com")
     user.set_password("Str0ngPass!")
     account = UserAccount(user)
 
     # --- Успішний вхід ---
     print("1. Успішний вхід:")
-    success = account.login("alice", "Str0ngPass!", ip="192.168.1.10")
-    print(f"   login('alice', правильний пароль) -> {success}")
+    success = account.login("John", "Str0ngPass!", ip="192.168.1.10")
+    print(f"   login('John', правильний пароль) -> {success}")
     print(f"   is_authenticated() -> {account.is_authenticated()}\n")
 
     account.logout()
 
     # --- Невдалий вхід ---
     print("2. Невдалий вхід (неправильний пароль):")
-    success = account.login("alice", "WrongPassword", ip="192.168.1.10")
-    print(f"   login('alice', неправильний пароль) -> {success}\n")
+    success = account.login("John", "WrongPassword", ip="192.168.1.10")
+    print(f"   login('Joe', неправильний пароль) -> {success}\n")
 
     # --- Зміна email із валідацією ---
     print("3. Зміна email:")
     print(f"   Поточний email: {user.email}")
     try:
-        user.email = "new_alice@example.com"
+        user.email = "new_John@example.com"
         print(f"   Новий email встановлено: {user.email}")
     except ValueError as e:
         print(f"   Помилка: {e}")
@@ -49,19 +49,23 @@ def run_demo() -> None:
     admin.grant_permission("manage_users")
     admin.grant_permission("view_audit_log")
     print(f"   {admin}")
-    print(f"   has_permission('manage_users') -> {admin.has_permission('manage_users')}")
+    print(
+        f"   has_permission('manage_users') -> {admin.has_permission('manage_users')}"
+    )
     admin.revoke_permission("manage_users")
     print(f"   Після revoke_permission('manage_users'): {admin}\n")
 
     # --- Завершення сесії за таймаутом ---
     print("5. Завершення сесії за таймаутом:")
-    account.login("alice", "Str0ngPass!", ip="192.168.1.10")
+    account.login("John", "Str0ngPass!", ip="192.168.1.10")
     print(f"   Одразу після входу, is_authenticated() -> {account.is_authenticated()}")
 
     # Імітуємо, що з моменту останньої активності пройшло більше часу,
     # ніж дозволяє SESSION_TIMEOUT_SEC, не чекаючи реального часу
     account.session.last_activity -= timedelta(seconds=1000)
-    print(f"   Після імітації простою (1000 сек), is_authenticated() -> {account.is_authenticated()}\n")
+    print(
+        f"   Після імітації простою (1000 сек), is_authenticated() -> {account.is_authenticated()}\n"
+    )
 
     # --- Вихід із системи ---
     print("6. Вихід із системи:")
@@ -85,7 +89,9 @@ def main() -> None:
     analyze_parser = subparsers.add_parser(
         "analyze", help="Запустити CLI-утиліту аналізу (Завдання 2)"
     )
-    analyze_parser.add_argument("--rules-file", required=True, help="Шлях до файлу правил")
+    analyze_parser.add_argument(
+        "--rules-file", required=True, help="Шлях до файлу правил"
+    )
     analyze_parser.add_argument("--output", help="Шлях до файлу звіту")
     analyze_parser.add_argument(
         "--check-conflicts", action="store_true", help="Перевіряти конфлікти правил"

@@ -201,7 +201,9 @@ def print_report(
         print("Conflicting Rules               : not checked (use --check-conflicts)")
         print("Duplicate Rules                  : not checked (use --check-conflicts)")
 
-    print(f"High-Risk Rules                 : {len(high_risk)} dangerous ALLOW ALL rules")
+    print(
+        f"High-Risk Rules                 : {len(high_risk)} dangerous ALLOW ALL rules"
+    )
 
     print("\n=== Critical Findings ===")
 
@@ -251,7 +253,9 @@ def run_analysis(args: argparse.Namespace) -> None:
         logger.error("Помилка доступу до файлу правил: %s", e)
         sys.exit(1)
 
-    logger.info("Total rules parsed: %d. Validating IP syntax and rule logic...", len(rules))
+    logger.info(
+        "Total rules parsed: %d. Validating IP syntax and rule logic...", len(rules)
+    )
 
     valid_rules, invalid_entries = validate_rules(rules)
 

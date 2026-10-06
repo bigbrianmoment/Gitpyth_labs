@@ -202,6 +202,8 @@ class UserAccount:
         if key == "session" and value is not None and not isinstance(value, Session):
             raise TypeError("Значення для 'session' повинно бути екземпляром Session")
         if key == "audit_log" and not isinstance(value, AuditLog):
-            raise TypeError("Значення для 'audit_log' повинно бути екземпляром AuditLog")
+            raise TypeError(
+                "Значення для 'audit_log' повинно бути екземпляром AuditLog"
+            )
 
         setattr(self, key, value)
