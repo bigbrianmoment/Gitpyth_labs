@@ -22,3 +22,8 @@ labs/*/data/
 
 .DS_Store
 Thumbs.db
+
+labs/lab03/data/*.sqlite3
+labs/lab03/data/*.sqlite3-*
+labs/lab03/data/*.db
+labs/lab03/data/*.db-*
